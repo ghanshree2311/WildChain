@@ -28,9 +28,9 @@ block::block(block *prevBlock)
 void block::calculateHash()
 {
     uint32_t size_payload = (SHA256_DIGEST_LENGTH * sizeof(uint8_t)) + sizeof(time_t) + sizeof(Data) + sizeof(uint32_t);
-    // payload -> input to sha256-> prev. hash, timestamp, data, nonce
+    // payload -> input to sha256-> prev. hash, timestamp,dat,nonce
     uint8_t *buf = new uint8_t[size_payload];
-    // initialize a pointer of the size of the payload
+    // initialize a pointer of the size of payload
     uint8_t *ptr = buf;
     // a ptr. to the beginning of the buffer
 
@@ -59,7 +59,12 @@ uint8_t *block::gethash()
 }
 std::string block::getHashstr()
 {
-    std::string Hashstr;
+    char buf[SHA256_DIGEST_LENGTH*2 + 1];
+    for(uint32_t n=0;n<SHA256_DIGEST_LENGTH;n++){
+        sprintf(buf+(n*2),"%02x",Hash[n]);
+    }
+    buf[SHA256_DIGEST_LENGTH*2]=0;
+    return std::string(buf);
 }
 block *block::getpreviousblock()
 {
@@ -79,9 +84,6 @@ void block::appendData(Data *data)
     memcpy(ptr, data, sizeof(data));
     details = data;
 }
-
-// Mining Block
-
 bool block::isdifficulty(int difficulty)
 {
     for (uint32_t n = 0; n < difficulty; n++)
